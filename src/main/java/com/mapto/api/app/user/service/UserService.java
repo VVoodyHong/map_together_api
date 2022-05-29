@@ -1,8 +1,10 @@
 package com.mapto.api.app.user.service;
 
+import com.mapto.api.app.file.entity.File;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
+import com.mapto.api.common.file.FileUploader;
 import com.mapto.api.common.model.type.ExistType;
 import com.mapto.api.common.util.CheckUtil;
 import com.mapto.api.common.model.CustomException;
@@ -12,11 +14,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final FileUploader fileUploader;
 
     @Transactional
     public void createUser(UserDTO.Create userInfo) throws CustomException {
@@ -35,14 +41,16 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO.Simple updateUser(Long userIdx, UserDTO.Update userInfo) throws CustomException {
+    public UserDTO.Simple updateUser(Long userIdx, UserDTO.Update userInfo, MultipartFile file) throws CustomException, IOException {
         User user = userRepository.findByIdx(userIdx);
-        if(userInfo.getNickname() != null) {
-            user.setNickname(userInfo.getNickname());
-            return userRepository.save(user).toUserSimpleDTO();
-        } else {
-            return user.toUserSimpleDTO();
+        user.setNickname(userInfo.getNickname());
+        user.setName(userInfo.getName());
+        user.setIntroduce(userInfo.getIntroduce());
+        if(file != null) {
+            File profileImgFile = fileUploader.upload(file, "image/profile");
+            user.setProfileImg(profileImgFile.getUrl());
         }
+        return userRepository.save(user).toUserSimpleDTO();
     }
 
     @Transactional(readOnly = true)
