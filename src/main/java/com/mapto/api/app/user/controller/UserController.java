@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "user", description = "user API")
 @RestController
@@ -60,9 +61,9 @@ public class UserController {
 
     @Operation(summary = "user update")
     @PatchMapping("/api/v1/app/user/{idx}")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable Long idx, @RequestBody UserDTO.Update userInfo) {
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable Long idx, @RequestBody UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
-            return ResponseMessageUtil.successMessage(userService.updateUser(idx, userInfo));
+            return ResponseMessageUtil.successMessage(userService.updateUser(idx, userInfo, file));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {
