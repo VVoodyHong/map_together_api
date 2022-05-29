@@ -1,0 +1,67 @@
+package com.mapto.api.common.util;
+
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class AmazonS3Util {
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.location}")
+    private String location;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    private String path;
+    private String fileName;
+
+    public String upload(MultipartFile multipartFile, String dir) throws IOException {
+        fileName = multipartFile.getOriginalFilename();
+        path = location + dir + "/" + generateFileName();
+        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("파일 컨버팅 실패"));
+        return putS3(uploadFile);
+    }
+
+    private Optional<File> convert(MultipartFile multipartFile) throws IOException {
+        File convertFile = new File(Objects.requireNonNull(fileName));
+        if(convertFile.createNewFile()) {
+            try(FileOutputStream fos = new FileOutputStream(convertFile)) {
+                fos.write(multipartFile.getBytes());
+            }
+            return Optional.of(convertFile);
+        }
+        return Optional.empty();
+    }
+
+    private String generateFileName() {
+        Long currentTimeMillis = System.currentTimeMillis();
+        String encryptedValue = AES256Util.encrypt(String.valueOf(currentTimeMillis)).replaceAll("/", "");
+        String fileType = FileUtil.getFileType(fileName);
+        return encryptedValue + "." + fileType;
+    }
+
+    private String putS3(File uploadFile) {
+        amazonS3.putObject(new PutObjectRequest(bucketName, path, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        return amazonS3.getUrl(bucketName, path).toString();
+    }
+
+    public long getFileSize() {
+        if (path == null) {
+            throw new IllegalArgumentException("업로드 후 파일 크기를 알 수 있습니다.");
+        }
+        return amazonS3.getObjectMetadata(bucketName, path).getContentLength();
+    }
+}
