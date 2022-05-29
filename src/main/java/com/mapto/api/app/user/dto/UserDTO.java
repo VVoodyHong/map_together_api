@@ -12,6 +12,8 @@ public class UserDTO {
         private String loginId;
         private String name;
         private String nickname;
+        private String profileImg;
+        private String introduce;
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
     }
@@ -25,5 +27,8 @@ public class UserDTO {
     @Data
     public static class Update {
         private String nickname;
+        private String name;
+        private String profileImg;
+        private String introduce;
     }
 }
