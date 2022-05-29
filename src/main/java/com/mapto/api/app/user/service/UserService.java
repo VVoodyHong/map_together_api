@@ -1,6 +1,6 @@
 package com.mapto.api.app.user.service;
 
-import com.mapto.api.app.file.entity.File;
+import com.mapto.api.app.file.dto.FileDTO;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
@@ -47,7 +47,7 @@ public class UserService {
         user.setName(userInfo.getName());
         user.setIntroduce(userInfo.getIntroduce());
         if(file != null) {
-            File profileImgFile = fileUploader.upload(file, "image/profile");
+            FileDTO.Simple profileImgFile = fileUploader.upload(file, "image/profile");
             user.setProfileImg(profileImgFile.getUrl());
         }
         return userRepository.save(user).toUserSimpleDTO();
