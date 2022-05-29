@@ -11,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
@@ -23,6 +22,8 @@ public class User extends DateAudit {
     private String name;
     private String nickname;
     private String password;
+    private String profileImg;
+    private String introduce;
     @Enumerated(EnumType.STRING)
     private UserType userType;
     @Enumerated(EnumType.STRING)
@@ -40,6 +41,8 @@ public class User extends DateAudit {
             String name,
             String nickname,
             String password,
+            String profileImg,
+            String introduce,
             UserType userType,
             LoginType loginType,
             OsType osType,
@@ -52,6 +55,8 @@ public class User extends DateAudit {
         this.name = name;
         this.nickname = nickname;
         this.password = password;
+        this.profileImg = profileImg;
+        this.introduce = introduce;
         this.userType = userType;
         this.loginType = loginType;
         this.osType = osType;
@@ -68,6 +73,14 @@ public class User extends DateAudit {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg =profileImg;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 
     public void setUserType(UserType userType) {
