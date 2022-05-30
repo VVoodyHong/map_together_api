@@ -60,10 +60,10 @@ public class UserController {
     }
 
     @Operation(summary = "user update")
-    @PatchMapping("/api/v1/app/user/{idx}")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable Long idx, @RequestBody UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
+    @PostMapping("/api/v1/app/user")
+    public ResponseEntity<ApiResponse> updateUser(@AuthenticationPrincipal UserPrincipal  userPrincipal, UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
-            return ResponseMessageUtil.successMessage(userService.updateUser(idx, userInfo, file));
+            return ResponseMessageUtil.successMessage(userService.updateUser(userPrincipal.getIdx(), userInfo, file));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {

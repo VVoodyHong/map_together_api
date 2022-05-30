@@ -46,8 +46,13 @@ public class UserService {
         user.setNickname(userInfo.getNickname());
         user.setName(userInfo.getName());
         user.setIntroduce(userInfo.getIntroduce());
+        // set default image
+        if(userInfo.getProfileImg() != null && userInfo.getProfileImg().equals("default")) {
+            user.setProfileImg(null);
+        }
+        // set image
         if(file != null) {
-            FileDTO.Simple profileImgFile = fileUploader.upload(file, "image/profile");
+            FileDTO.Simple profileImgFile = fileUploader.upload(file, "profile");
             user.setProfileImg(profileImgFile.getUrl());
         }
         return userRepository.save(user).toUserSimpleDTO();
