@@ -73,7 +73,7 @@ public class UserService {
             }
             User user = userRepository.findByLoginId(value);
             if(user != null) {
-                return StatusCode.CODE_607;
+                throw new CustomException(StatusCode.CODE_607);
             } else {
                 return StatusCode.CODE_200;
             }
@@ -83,12 +83,12 @@ public class UserService {
             }
             User user = userRepository.findByNickname(value);
             if(user != null) {
-                return StatusCode.CODE_608;
+                throw new CustomException(StatusCode.CODE_608);
             } else {
                 return StatusCode.CODE_200;
             }
         } else {
-            return StatusCode.CODE_609;
+            throw new CustomException(StatusCode.CODE_609);
         }
     }
 }
