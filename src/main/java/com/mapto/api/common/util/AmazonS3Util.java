@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AmazonS3Util {
@@ -55,7 +57,20 @@ public class AmazonS3Util {
 
     private String putS3(File uploadFile) {
         amazonS3.putObject(new PutObjectRequest(bucketName, path, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3.getUrl(bucketName, path).toString();
+        if(removeTempFile(uploadFile)) {
+            return amazonS3.getUrl(bucketName, path).toString();
+        } else {
+            return null;
+        }
+    }
+
+    private boolean removeTempFile(File tempFile) {
+        if(tempFile.delete()) {
+            return true;
+        } else {
+            log.error("임시 파일 삭제에 실패했습니다. 파일 이름:: {}", tempFile.getName());
+            return false;
+        }
     }
 
     public long getFileSize() {
