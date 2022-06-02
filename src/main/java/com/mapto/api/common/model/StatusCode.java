@@ -28,7 +28,11 @@ public enum StatusCode {
     /* user */
     ,CODE_701(701, "유저 인덱스가 올바르지 않습니다.")
     ,CODE_702(702, "유저 수정 내역이 존재하지 않습니다.")
-    ;
+
+
+    /* place category */
+    ,CODE_751(751, "카테고리명을 입력해주세요.")
+    ,CODE_752(752, "카테고리 마커를 선택해주세요.");
 
     private final Integer code;
     private final String msg;
