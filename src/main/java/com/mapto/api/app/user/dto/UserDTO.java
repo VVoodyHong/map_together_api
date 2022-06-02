@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class UserDTO {
 
     @Data
-    public static class Simple {
+    public static class Basic {
         private Long idx;
         private String loginId;
         private String name;

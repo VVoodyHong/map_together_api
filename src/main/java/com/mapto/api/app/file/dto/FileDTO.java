@@ -6,7 +6,7 @@ import lombok.Data;
 public class FileDTO {
 
     @Data
-    public static class Simple {
+    public static class Basic {
         private Long idx;
         private String name;
         private FileType type;

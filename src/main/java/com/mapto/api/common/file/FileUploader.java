@@ -17,12 +17,12 @@ import java.util.Objects;
 public class FileUploader {
     private final AmazonS3Util amazonS3Util;
 
-    public FileDTO.Simple upload(MultipartFile file, String dir) throws IOException {
+    public FileDTO.Basic upload(MultipartFile file, String dir) throws IOException {
         String url = amazonS3Util.upload(file, dir);
         String name = Normalizer.normalize(Objects.requireNonNull(file.getOriginalFilename()), Normalizer.Form.NFC);
         FileType type = FileUtil.toFileType(FileUtil.getFileType(name));
 //        String size = FileUtil.convertFileSize(amazonS3Util.getFileSize());
-        FileDTO.Simple fileDTO = new FileDTO.Simple();
+        FileDTO.Basic fileDTO = new FileDTO.Basic();
         fileDTO.setName(name);
         fileDTO.setUrl(url);
         fileDTO.setType(type);
