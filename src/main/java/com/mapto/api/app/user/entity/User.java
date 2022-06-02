@@ -1,5 +1,6 @@
 package com.mapto.api.app.user.entity;
 
+import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.common.model.DateAudit;
 import com.mapto.api.common.model.type.LoginType;
@@ -9,6 +10,8 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -34,6 +37,9 @@ public class User extends DateAudit {
     private Integer osVersion;
     private String deviceId;
 
+    @OneToMany(mappedBy = "user")
+    private List<PlaceCategory> placeCategories = new ArrayList<>();
+
     @Builder
     public User(
             Long idx,
@@ -48,7 +54,8 @@ public class User extends DateAudit {
             OsType osType,
             String appVersion,
             Integer osVersion,
-            String deviceId
+            String deviceId,
+            List<PlaceCategory> placeCategoryList
     ) {
         this.idx = idx;
         this.loginId = loginId;
@@ -62,7 +69,8 @@ public class User extends DateAudit {
         this.osType = osType;
         this.appVersion = appVersion;
         this.osVersion = osVersion;
-        this.deviceId =deviceId;
+        this.deviceId = deviceId;
+        this.placeCategories = placeCategoryList;
     }
 
     public void setName(String name) { this.name = name; }
@@ -107,9 +115,12 @@ public class User extends DateAudit {
         this.deviceId = deviceId;
     }
 
+    public void setPlaceCategories(List<PlaceCategory> placeCategoryList) {
+        this.placeCategories = placeCategoryList;
+    }
 
-    public UserDTO.Simple toUserSimpleDTO() {
-        return new ModelMapper().map(this, UserDTO.Simple.class);
+    public UserDTO.Basic toUserBasicDTO() {
+        return new ModelMapper().map(this, UserDTO.Basic.class);
     }
 
 }
