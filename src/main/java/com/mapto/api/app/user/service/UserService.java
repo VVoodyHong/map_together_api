@@ -37,11 +37,11 @@ public class UserService {
                 .nickname("")
                 .password(passwordEncoder.encode(userInfo.getPassword()))
                 .build();
-        userRepository.save(user).toUserSimpleDTO();
+        userRepository.save(user).toUserBasicDTO();
     }
 
     @Transactional
-    public UserDTO.Simple updateUser(Long userIdx, UserDTO.Update userInfo, MultipartFile file) throws CustomException, IOException {
+    public UserDTO.Basic updateUser(Long userIdx, UserDTO.Update userInfo, MultipartFile file) throws CustomException, IOException {
         User user = userRepository.findByIdx(userIdx);
         user.setNickname(userInfo.getNickname());
         user.setName(userInfo.getName());
@@ -52,17 +52,17 @@ public class UserService {
         }
         // set image
         if(file != null) {
-            FileDTO.Simple profileImgFile = fileUploader.upload(file, "profile");
+            FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
             user.setProfileImg(profileImgFile.getUrl());
         }
-        return userRepository.save(user).toUserSimpleDTO();
+        return userRepository.save(user).toUserBasicDTO();
     }
 
     @Transactional(readOnly = true)
-    public UserDTO.Simple readUser(UserPrincipal userPrincipal) throws CustomException {
+    public UserDTO.Basic readUser(UserPrincipal userPrincipal) throws CustomException {
         Long userIdx = userPrincipal.getUser().getIdx();
         User user = userRepository.findByIdx(userIdx);
-        return user.toUserSimpleDTO();
+        return user.toUserBasicDTO();
     }
 
     @Transactional(readOnly = true)
