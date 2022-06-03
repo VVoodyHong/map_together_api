@@ -1,5 +1,6 @@
 package com.mapto.api.app.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.common.model.DateAudit;
@@ -38,6 +39,7 @@ public class User extends DateAudit {
     private String deviceId;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<PlaceCategory> placeCategories = new ArrayList<>();
 
     @Builder
