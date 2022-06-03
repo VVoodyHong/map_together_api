@@ -6,7 +6,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum PlaceCategoryType {
-    HEART("HEART");
+    AIRPLANE("AIRPLANE"),
+    BEER("BEER"),
+    COFFEE("COFFEE"),
+    DESSERT("DESSERT"),
+    HEART("HEART"),
+    MARKER("MARKER"),
+    RICE("RICE"),
+    SPORTS("SPORTS"),
+    STAR("STAR");
 
     private final String type;
 }
