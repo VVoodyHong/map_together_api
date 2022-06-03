@@ -26,8 +26,7 @@ public class PlaceCategoryController {
     @PostMapping("/api/v1/app/place_category")
     public ResponseEntity<ApiResponse> createPlaceCategory(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PlaceCategoryDTO.Create placeCategoryInfo) {
         try {
-            placeCategoryService.createPlaceCategory(userPrincipal, placeCategoryInfo);
-            return ResponseMessageUtil.successMessage();
+            return ResponseMessageUtil.successMessage(placeCategoryService.createPlaceCategory(userPrincipal, placeCategoryInfo));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {

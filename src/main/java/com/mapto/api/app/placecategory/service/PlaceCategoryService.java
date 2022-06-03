@@ -24,19 +24,20 @@ public class PlaceCategoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createPlaceCategory(UserPrincipal userPrincipal, PlaceCategoryDTO.Create placeCategoryInfo) throws CustomException {
+    public PlaceCategoryDTO.Basic createPlaceCategory(UserPrincipal userPrincipal, PlaceCategoryDTO.Create placeCategoryInfo) throws CustomException {
         if(CheckUtil.isEmptyString(placeCategoryInfo.getName())) {
             throw new CustomException(StatusCode.CODE_751);
         } else if(CheckUtil.isNullObject(placeCategoryInfo.getType())) {
             throw new CustomException(StatusCode.CODE_752);
         }
-
+        User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
         PlaceCategory placeCategory = PlaceCategory.builder()
-                .user(userPrincipal.getUser())
+                .user(user)
                 .name(placeCategoryInfo.getName())
                 .type(placeCategoryInfo.getType())
                 .build();
-        placeCategoryRepository.save(placeCategory);
+        PlaceCategoryDTO.Basic result = placeCategoryRepository.save(placeCategory).toPlaceCategoryBasicDTO();
+        return result;
     }
 
     @Transactional(readOnly = true)
