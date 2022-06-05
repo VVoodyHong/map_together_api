@@ -1,6 +1,7 @@
 package com.mapto.api.app.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mapto.api.app.place.entity.Place;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.common.model.DateAudit;
@@ -42,6 +43,10 @@ public class User extends DateAudit {
     @JsonIgnore
     private List<PlaceCategory> placeCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Place> places = new ArrayList<>();
+
     @Builder
     public User(
             Long idx,
@@ -56,8 +61,7 @@ public class User extends DateAudit {
             OsType osType,
             String appVersion,
             Integer osVersion,
-            String deviceId,
-            List<PlaceCategory> placeCategoryList
+            String deviceId
     ) {
         this.idx = idx;
         this.loginId = loginId;
@@ -72,7 +76,6 @@ public class User extends DateAudit {
         this.appVersion = appVersion;
         this.osVersion = osVersion;
         this.deviceId = deviceId;
-        this.placeCategories = placeCategoryList;
     }
 
     public void setName(String name) { this.name = name; }
@@ -119,6 +122,10 @@ public class User extends DateAudit {
 
     public void setPlaceCategories(List<PlaceCategory> placeCategoryList) {
         this.placeCategories = placeCategoryList;
+    }
+
+    public void setPlaces(List<Place> placeList) {
+        this.places = placeList;
     }
 
     public UserDTO.Basic toUserBasicDTO() {
