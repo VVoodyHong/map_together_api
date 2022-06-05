@@ -30,9 +30,12 @@ public enum StatusCode {
     ,CODE_702(702, "유저 수정 내역이 존재하지 않습니다.")
 
 
-    /* place category */
+    /* place  */
     ,CODE_751(751, "카테고리명을 입력해주세요.")
-    ,CODE_752(752, "카테고리 마커를 선택해주세요.");
+    ,CODE_752(752, "카테고리 마커를 선택해주세요.")
+    ,CODE_753(753, "장소명을 입력해주세요.")
+    ,CODE_754(754, "주소를 입력해주세요.")
+    ,CODE_755(755, "카테고리를 선택해주세요.");
 
     private final Integer code;
     private final String msg;
