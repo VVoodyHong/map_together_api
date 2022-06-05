@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -17,11 +19,22 @@ import java.util.Objects;
 public class FileUploader {
     private final AmazonS3Util amazonS3Util;
 
+    public List<FileDTO.Basic> upload(List<MultipartFile> fileList, String dir) throws IOException {
+        List<FileDTO.Basic> result = new ArrayList<>();
+        for (MultipartFile multipartFile : fileList) {
+            result.add(uploadS3(dir, multipartFile));
+        }
+        return result;
+    }
+
     public FileDTO.Basic upload(MultipartFile file, String dir) throws IOException {
-        String url = amazonS3Util.upload(file, dir);
-        String name = Normalizer.normalize(Objects.requireNonNull(file.getOriginalFilename()), Normalizer.Form.NFC);
+        return uploadS3(dir, file);
+    }
+
+    private FileDTO.Basic uploadS3(String dir, MultipartFile multipartFile) throws IOException {
+        String url = amazonS3Util.upload(multipartFile, dir);
+        String name = Normalizer.normalize(Objects.requireNonNull(multipartFile.getOriginalFilename()), Normalizer.Form.NFC);
         FileType type = FileUtil.toFileType(FileUtil.getFileType(name));
-//        String size = FileUtil.convertFileSize(amazonS3Util.getFileSize());
         FileDTO.Basic fileDTO = new FileDTO.Basic();
         fileDTO.setName(name);
         fileDTO.setUrl(url);
