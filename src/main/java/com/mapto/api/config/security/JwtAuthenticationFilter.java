@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapto.api.app.user.service.UserDetailsServiceImpl;
 import com.mapto.api.common.model.ApiResponse;
 import com.mapto.api.common.model.StatusCode;
-import com.mapto.api.common.util.CheckUtil;
 import com.mapto.api.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
             String jwt = JwtUtil.getJwtFromRequest(request);
             if(jwt != null) {
@@ -65,7 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             returnError(response, StatusCode.CODE_652);
             return;
         }
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } catch(Exception e) {
+            if(e.getCause().getClass().equals(MaxUploadSizeExceededException.class)) {
+                log.error("MaxUploadSizeExceededException error :: " + e);
+                returnError(response, StatusCode.CODE_801);
+            } else {
+                log.error("filterChain error :: " + e);
+                returnError(response, StatusCode.CODE_655);
+            }
+        }
     }
 
     public void returnError(HttpServletResponse response, StatusCode errorCode) throws IOException{
