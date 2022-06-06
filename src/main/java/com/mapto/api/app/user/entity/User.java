@@ -12,6 +12,7 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class User extends DateAudit {
     private String appVersion;
     private Integer osVersion;
     private String deviceId;
+    private BigDecimal lat;
+    private BigDecimal lng;
+    private BigDecimal zoom;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -61,7 +65,10 @@ public class User extends DateAudit {
             OsType osType,
             String appVersion,
             Integer osVersion,
-            String deviceId
+            String deviceId,
+            BigDecimal lat,
+            BigDecimal lng,
+            BigDecimal zoom
     ) {
         this.idx = idx;
         this.loginId = loginId;
@@ -76,6 +83,9 @@ public class User extends DateAudit {
         this.appVersion = appVersion;
         this.osVersion = osVersion;
         this.deviceId = deviceId;
+        this.lat = lat;
+        this.lng = lng;
+        this.zoom = zoom;
     }
 
     public void setName(String name) { this.name = name; }
@@ -127,6 +137,12 @@ public class User extends DateAudit {
     public void setPlaces(List<Place> placeList) {
         this.places = placeList;
     }
+
+    public void setLat(BigDecimal lat) { this.lat = lat; }
+
+    public void setLng(BigDecimal lng) { this.lng = lng; }
+
+    public void setZoom(BigDecimal zoom) { this.zoom = zoom; }
 
     public UserDTO.Basic toUserBasicDTO() {
         return new ModelMapper().map(this, UserDTO.Basic.class);

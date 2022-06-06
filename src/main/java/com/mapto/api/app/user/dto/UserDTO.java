@@ -1,8 +1,12 @@
 package com.mapto.api.app.user.dto;
 
+import com.mapto.api.app.place.dto.PlaceDTO;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDTO {
 
@@ -14,8 +18,12 @@ public class UserDTO {
         private String nickname;
         private String profileImg;
         private String introduce;
+        private BigDecimal lat;
+        private BigDecimal lng;
+        private BigDecimal zoom;
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
+        private List<PlaceDTO.Basic> places = new ArrayList<>();
     }
 
     @Data
@@ -30,5 +38,8 @@ public class UserDTO {
         private String name;
         private String profileImg;
         private String introduce;
+        private BigDecimal lat;
+        private BigDecimal lng;
+        private BigDecimal zoom;
     }
 }

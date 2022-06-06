@@ -44,8 +44,11 @@ public class UserService {
     public UserDTO.Basic updateUser(Long userIdx, UserDTO.Update userInfo, MultipartFile file) throws CustomException, IOException {
         User user = userRepository.findByIdx(userIdx);
         user.setNickname(userInfo.getNickname());
-        user.setName(userInfo.getName());
-        user.setIntroduce(userInfo.getIntroduce());
+        if(userInfo.getName() != null) user.setName(userInfo.getName());
+        if(userInfo.getIntroduce() != null) user.setIntroduce(userInfo.getIntroduce());
+        if(userInfo.getLat() != null) user.setLat(userInfo.getLat());
+        if(userInfo.getLng() != null) user.setLng(userInfo.getLng());
+        if(userInfo.getZoom() != null) user.setZoom(userInfo.getZoom());
         // set default image
         if(userInfo.getProfileImg() != null && userInfo.getProfileImg().equals("default")) {
             user.setProfileImg(null);
