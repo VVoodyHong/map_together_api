@@ -6,10 +6,14 @@ import com.mapto.api.app.file.repository.FileRepository;
 import com.mapto.api.app.place.dto.PlaceDTO;
 import com.mapto.api.app.place.entity.Place;
 import com.mapto.api.app.place.entity.PlaceFile;
+import com.mapto.api.app.place.entity.PlaceTag;
 import com.mapto.api.app.place.repository.PlaceFileRepository;
 import com.mapto.api.app.place.repository.PlaceRepository;
+import com.mapto.api.app.place.repository.PlaceTagRepository;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.placecategory.repository.PlaceCategoryRepository;
+import com.mapto.api.app.tag.entity.Tag;
+import com.mapto.api.app.tag.repository.TagRepository;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
 import com.mapto.api.common.file.FileUploader;
@@ -25,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,8 @@ public class PlaceService {
     private final PlaceCategoryRepository placeCategoryRepository;
     private final PlaceFileRepository placeFileRepository;
     private final FileRepository fileRepository;
+    private final PlaceTagRepository placeTagRepository;
+    private final TagRepository tagRepository;
     private final FileUploader fileUploader;
 
     @Transactional
@@ -54,10 +61,28 @@ public class PlaceService {
                 .name(placeInfo.getName())
                 .address(placeInfo.getAddress())
                 .description(placeInfo.getDescription())
+                .favorite(placeInfo.getFavorite())
                 .lat(placeInfo.getLat())
                 .lng(placeInfo.getLng())
                 .build();
         Place placeEntity = placeRepository.save(place);
+
+        List<Tag> tagEntities = new ArrayList<>();
+        List<PlaceTag> placeTagEntities = new ArrayList<>();
+        for(String tagName : placeInfo.getTags()) {
+            Optional<Tag> findTag = tagRepository.findTagByName(tagName);
+            Tag tag = findTag.orElseGet(() -> Tag.builder()
+                    .name(tagName)
+                    .build());
+            PlaceTag placeTag = PlaceTag.builder()
+                    .place(placeEntity)
+                    .tag(tag)
+                    .build();
+            tagEntities.add(tag);
+            placeTagEntities.add(placeTag);
+        }
+        tagRepository.saveAll(tagEntities);
+        placeTagRepository.saveAll(placeTagEntities);
 
         if(files != null && files.size() != 0) {
             List<FileDTO.Basic> fileList = fileUploader.upload(files, "place");
