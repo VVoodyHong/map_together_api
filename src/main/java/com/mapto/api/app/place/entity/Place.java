@@ -26,6 +26,7 @@ public class Place extends DateAudit {
     private String name;
     private String address;
     private String description;
+    private Double favorite;
     private BigDecimal lat;
     private BigDecimal lng;
 
@@ -37,6 +38,7 @@ public class Place extends DateAudit {
             String name,
             String address,
             String description,
+            Double favorite,
             BigDecimal lat,
             BigDecimal lng
     ) {
@@ -46,6 +48,7 @@ public class Place extends DateAudit {
         this.name = name;
         this.address = address;
         this.description = description;
+        this.favorite = favorite;
         this.lat = lat;
         this.lng = lng;
     }

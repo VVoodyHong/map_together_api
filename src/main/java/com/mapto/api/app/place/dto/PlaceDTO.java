@@ -5,6 +5,8 @@ import com.mapto.api.app.user.entity.User;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlaceDTO {
 
@@ -16,6 +18,7 @@ public class PlaceDTO {
         private String name;
         private String address;
         private String description;
+        private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
     }
@@ -26,6 +29,8 @@ public class PlaceDTO {
         private String name;
         private String address;
         private String description;
+        private List<String> tags = new ArrayList<>();
+        private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
     }
