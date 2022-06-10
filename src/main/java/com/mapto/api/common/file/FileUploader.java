@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +41,9 @@ public class FileUploader {
         fileDTO.setUrl(url);
         fileDTO.setType(type);
         return fileDTO;
+    }
+
+    public boolean delete(String path) throws UnsupportedEncodingException {
+        return amazonS3Util.delete(path);
     }
 }

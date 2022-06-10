@@ -55,8 +55,18 @@ public class UserService {
         }
         // set image
         if(file != null) {
-            FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
-            user.setProfileImg(profileImgFile.getUrl());
+            if(user.getProfileImg() != null) {
+                boolean deleted = fileUploader.delete(user.getProfileImg());
+                if(deleted) {
+                    FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
+                    user.setProfileImg(profileImgFile.getUrl());
+                } else {
+                    throw new CustomException(StatusCode.CODE_703);
+                }
+            } else {
+                FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
+                user.setProfileImg(profileImgFile.getUrl());
+            }
         }
         return userRepository.save(user).toUserBasicDTO();
     }
