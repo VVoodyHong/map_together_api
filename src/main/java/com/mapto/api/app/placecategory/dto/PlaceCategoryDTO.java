@@ -1,8 +1,10 @@
 package com.mapto.api.app.placecategory.dto;
 
+import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.common.model.type.PlaceCategoryType;
 import lombok.Data;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +27,10 @@ public class PlaceCategoryDTO {
         private Long idx;
         private String name;
         private PlaceCategoryType type;
+
+        public PlaceCategory toEntity(){
+            return new ModelMapper().map(this, PlaceCategory.class);
+        }
     }
 
     @Data
