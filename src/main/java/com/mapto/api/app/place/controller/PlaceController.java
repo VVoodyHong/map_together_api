@@ -11,9 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -29,6 +27,18 @@ public class PlaceController {
     public ResponseEntity<ApiResponse> createPlace(@AuthenticationPrincipal UserPrincipal userPrincipal, PlaceDTO.Create placeInfo, @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         try {
             return ResponseMessageUtil.successMessage(placeService.createPlace(userPrincipal, placeInfo, files));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "get place images")
+    @GetMapping("/api/v1/app/place/image/{placeIdx}")
+    public ResponseEntity<ApiResponse> getPlaceImage(@PathVariable Long placeIdx) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.getPlaceImage(placeIdx));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {

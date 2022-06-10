@@ -106,5 +106,20 @@ public class PlaceService {
         }
         return placeEntity.toPlaceBasicDTO();
     }
+
+    @Transactional
+    public FileDTO.Simples getPlaceImage(Long placeIdx) throws CustomException{
+        if(placeIdx == null) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        List<File> files = fileRepository.findByPlaceIdx(placeIdx);
+        FileDTO.Simples result = new FileDTO.Simples();
+        List<FileDTO.Simple> list = new ArrayList<>();
+        for (File file : files) {
+            list.add(file.toFileSimpleDTO());
+        }
+        result.setList(list);
+        return result;
+    }
 }
 
