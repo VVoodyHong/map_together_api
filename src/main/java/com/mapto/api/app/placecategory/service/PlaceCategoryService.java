@@ -1,5 +1,7 @@
 package com.mapto.api.app.placecategory.service;
 
+import com.mapto.api.app.place.entity.Place;
+import com.mapto.api.app.place.repository.PlaceRepository;
 import com.mapto.api.app.placecategory.dto.PlaceCategoryDTO;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.placecategory.repository.PlaceCategoryRepository;
@@ -21,27 +23,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceCategoryService {
     private final PlaceCategoryRepository placeCategoryRepository;
+    private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public PlaceCategoryDTO.Basic createPlaceCategory(UserPrincipal userPrincipal, PlaceCategoryDTO.Create placeCategoryInfo) throws CustomException {
-        if(CheckUtil.isEmptyString(placeCategoryInfo.getName())) {
+    public PlaceCategoryDTO.Basic createPlaceCategory(UserPrincipal userPrincipal, PlaceCategoryDTO.Create placeCategory) throws CustomException {
+        if(CheckUtil.isEmptyString(placeCategory.getName())) {
             throw new CustomException(StatusCode.CODE_751);
-        } else if(CheckUtil.isNullObject(placeCategoryInfo.getType())) {
+        } else if(CheckUtil.isNullObject(placeCategory.getType())) {
             throw new CustomException(StatusCode.CODE_752);
         }
         User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
-        PlaceCategory placeCategory = PlaceCategory.builder()
+        PlaceCategory placeCategoryEntity = PlaceCategory.builder()
                 .user(user)
-                .name(placeCategoryInfo.getName())
-                .type(placeCategoryInfo.getType())
+                .name(placeCategory.getName())
+                .type(placeCategory.getType())
                 .build();
-        PlaceCategoryDTO.Basic result = placeCategoryRepository.save(placeCategory).toPlaceCategoryBasicDTO();
-        return result;
+        return placeCategoryRepository.save(placeCategoryEntity).toPlaceCategoryBasicDTO();
     }
 
     @Transactional(readOnly = true)
-    public PlaceCategoryDTO.Simples getPlaceCategories(UserPrincipal userPrincipal) {
+    public PlaceCategoryDTO.Simples getPlaceCategory(UserPrincipal userPrincipal) {
         User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
         PlaceCategoryDTO.Simples result = new PlaceCategoryDTO.Simples();
         List<PlaceCategoryDTO.Simple> list = new ArrayList<>();
@@ -51,6 +53,24 @@ public class PlaceCategoryService {
         result.setList(list);
         System.out.println(result);
         return result;
+    }
+
+    @Transactional
+    public void deletePlaceCategory(UserPrincipal userPrincipal, PlaceCategoryDTO.Simples placeCategory) throws CustomException{
+        List<Place> placeList = placeRepository.findByUser(userPrincipal.getUser());
+        List<PlaceCategoryDTO.Simple> dtoList = placeCategory.getList();
+        for(PlaceCategoryDTO.Simple dto : dtoList) {
+            for(Place place : placeList) {
+                if(place.getCategory().getIdx().equals(dto.getIdx())) {
+                    throw new CustomException(StatusCode.CODE_756);
+                }
+            }
+        }
+        List<PlaceCategory> entityList = new ArrayList<>();
+        for(PlaceCategoryDTO.Simple dto : placeCategory.getList()) {
+            entityList.add(dto.toEntity());
+        }
+        placeCategoryRepository.deleteAll(entityList);
     }
 
 }
