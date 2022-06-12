@@ -45,4 +45,54 @@ public class PlaceController {
             return ResponseMessageUtil.errorMessage(e);
         }
     }
+
+    @Operation(summary = "get place tags")
+    @GetMapping("/api/v1/app/place/tag/{placeIdx}")
+    public ResponseEntity<ApiResponse> getPlaceTag(@PathVariable Long placeIdx) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.getPlaceTag(placeIdx));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "create place like")
+    @PostMapping("/api/v1/app/place/like/{placeIdx}")
+    public ResponseEntity<ApiResponse> createPlaceLike(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeIdx) {
+        try {
+            placeService.createPlaceLike(userPrincipal, placeIdx);
+            return ResponseMessageUtil.successMessage();
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "get place like")
+    @GetMapping("/api/v1/app/place/like/{placeIdx}")
+    public ResponseEntity<ApiResponse> getPlaceLike(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeIdx) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.getPlaceLike(userPrincipal, placeIdx));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "delete place like")
+    @DeleteMapping("/api/v1/app/place/like/{placeIdx}")
+    public ResponseEntity<ApiResponse> deletePlaceLike(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long placeIdx) {
+        try {
+            placeService.deletePlaceLike(userPrincipal, placeIdx);
+            return ResponseMessageUtil.successMessage();
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
 }

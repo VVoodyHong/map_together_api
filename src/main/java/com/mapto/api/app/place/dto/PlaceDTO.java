@@ -5,6 +5,7 @@ import com.mapto.api.app.user.entity.User;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class PlaceDTO {
         private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
+        private LocalDateTime createAt;
+        private LocalDateTime updateAt;
     }
 
     @Data

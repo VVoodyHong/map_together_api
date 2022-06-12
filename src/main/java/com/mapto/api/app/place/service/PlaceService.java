@@ -4,14 +4,18 @@ import com.mapto.api.app.file.dto.FileDTO;
 import com.mapto.api.app.file.entity.File;
 import com.mapto.api.app.file.repository.FileRepository;
 import com.mapto.api.app.place.dto.PlaceDTO;
+import com.mapto.api.app.place.dto.PlaceLikeDTO;
 import com.mapto.api.app.place.entity.Place;
 import com.mapto.api.app.place.entity.PlaceFile;
+import com.mapto.api.app.place.entity.PlaceLike;
 import com.mapto.api.app.place.entity.PlaceTag;
 import com.mapto.api.app.place.repository.PlaceFileRepository;
+import com.mapto.api.app.place.repository.PlaceLikeRepository;
 import com.mapto.api.app.place.repository.PlaceRepository;
 import com.mapto.api.app.place.repository.PlaceTagRepository;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.placecategory.repository.PlaceCategoryRepository;
+import com.mapto.api.app.tag.dto.TagDTO;
 import com.mapto.api.app.tag.entity.Tag;
 import com.mapto.api.app.tag.repository.TagRepository;
 import com.mapto.api.app.user.entity.User;
@@ -42,6 +46,7 @@ public class PlaceService {
     private final PlaceTagRepository placeTagRepository;
     private final TagRepository tagRepository;
     private final FileUploader fileUploader;
+    private final PlaceLikeRepository placeLikeRepository;
 
     @Transactional
     public PlaceDTO.Basic createPlace(UserPrincipal userPrincipal, PlaceDTO.Create placeInfo, List<MultipartFile> files) throws CustomException, IOException {
@@ -108,7 +113,7 @@ public class PlaceService {
     }
 
     @Transactional
-    public FileDTO.Simples getPlaceImage(Long placeIdx) throws CustomException{
+    public FileDTO.Simples getPlaceImage(Long placeIdx) throws CustomException {
         if(placeIdx == null) {
             throw new CustomException(StatusCode.CODE_757);
         }
@@ -120,6 +125,57 @@ public class PlaceService {
         }
         result.setList(list);
         return result;
+    }
+
+    @Transactional
+    public TagDTO.Simples getPlaceTag(Long placeIdx) throws CustomException {
+        if(placeIdx == null) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        List<Tag> tags = tagRepository.findByPlaceIdx(placeIdx);
+        TagDTO.Simples result = new TagDTO.Simples();
+        List<TagDTO.Simple> list = new ArrayList<>();
+        for (Tag tag : tags) {
+            list.add(tag.toTagSimpleDTO());
+        }
+        result.setList(list);
+        return result;
+    }
+
+    @Transactional
+    public void createPlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
+        if(placeIdx == null) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
+        Place place = placeRepository.findByIdx(placeIdx);
+        PlaceLike placeLike = PlaceLike
+                .builder()
+                .user(user)
+                .place(place)
+                .build();
+        placeLikeRepository.save(placeLike);
+    }
+
+    @Transactional(readOnly = true)
+    public PlaceLikeDTO.Simple getPlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
+        if(placeIdx == null) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        PlaceLike placeLike = placeLikeRepository.findByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
+        Integer totalLike = placeLikeRepository.findByPlaceIdx(placeIdx).size();
+        PlaceLikeDTO.Simple placeLikeSimple = new PlaceLikeDTO.Simple();
+        placeLikeSimple.setTotalLike(totalLike);
+        placeLikeSimple.setLike(placeLike != null);
+        return placeLikeSimple;
+    }
+
+    @Transactional
+    public void deletePlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
+        if(placeIdx == null) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        placeLikeRepository.deleteByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
     }
 }
 
