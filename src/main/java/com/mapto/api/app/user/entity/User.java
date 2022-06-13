@@ -148,4 +148,7 @@ public class User extends DateAudit {
         return new ModelMapper().map(this, UserDTO.Basic.class);
     }
 
+    public UserDTO.Simple toUserSimpleDTO() {
+        return new ModelMapper().map(this, UserDTO.Simple.class);
+    }
 }

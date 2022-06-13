@@ -11,12 +11,16 @@ import com.mapto.api.common.model.CustomException;
 import com.mapto.api.common.model.StatusCode;
 import com.mapto.api.config.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -71,11 +75,42 @@ public class UserService {
         return userRepository.save(user).toUserBasicDTO();
     }
 
+    // find me
     @Transactional(readOnly = true)
     public UserDTO.Basic readUser(UserPrincipal userPrincipal) throws CustomException {
         Long userIdx = userPrincipal.getUser().getIdx();
         User user = userRepository.findByIdx(userIdx);
         return user.toUserBasicDTO();
+    }
+
+    // find other user
+    @Transactional(readOnly = true)
+    public UserDTO.Basic readUser(Long userIdx) throws CustomException {
+        if(CheckUtil.isNullObject(userIdx)) {
+            throw new CustomException(StatusCode.CODE_701);
+        } else {
+            User user = userRepository.findByIdx(userIdx);
+            return user.toUserBasicDTO();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO.Simples searchUser(UserDTO.Search search) throws CustomException {
+        if(CheckUtil.isEmptyString(search.getKeyword())) {
+            throw new CustomException(StatusCode.CODE_704);
+        } else {
+            Pageable pageable = search.getRequestPage().of();
+            Page<User> userPage = userRepository.findByKeyword(pageable, search.getKeyword());
+            UserDTO.Simples result = new UserDTO.Simples();
+            List<UserDTO.Simple> list = new ArrayList<>();
+            for(User user : userPage) {
+                list.add(user.toUserSimpleDTO());
+            }
+            result.setList(list);
+            result.setTotalCount(userPage.getTotalElements());
+            result.setLast(userPage.isLast());
+            return result;
+        }
     }
 
     @Transactional(readOnly = true)

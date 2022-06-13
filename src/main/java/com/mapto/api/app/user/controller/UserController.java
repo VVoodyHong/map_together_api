@@ -2,6 +2,7 @@ package com.mapto.api.app.user.controller;
 
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.common.model.ApiResponse;
+import com.mapto.api.common.model.RequestPage;
 import com.mapto.api.common.model.type.ExistType;
 import com.mapto.api.common.util.ResponseMessageUtil;
 import com.mapto.api.app.user.service.UserService;
@@ -47,11 +48,35 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "user info")
+    @Operation(summary = "my info")
     @GetMapping("/api/v1/app/user")
     public ResponseEntity<ApiResponse> getUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         try {
             return ResponseMessageUtil.successMessage(userService.readUser(userPrincipal));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "other user info")
+    @GetMapping("/api/v1/app/user/{userIdx}")
+    public ResponseEntity<ApiResponse> getUser(@PathVariable Long userIdx) {
+        try {
+            return ResponseMessageUtil.successMessage(userService.readUser(userIdx));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "search user")
+    @PostMapping("/api/v1/app/user/search")
+    public ResponseEntity<ApiResponse> searchUser(@RequestBody UserDTO.Search search) {
+        try {
+            return ResponseMessageUtil.successMessage(userService.searchUser(search));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {
