@@ -43,8 +43,8 @@ public class PlaceCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceCategoryDTO.Simples getPlaceCategory(UserPrincipal userPrincipal) {
-        User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
+    public PlaceCategoryDTO.Simples getPlaceCategory(Long userIdx) {
+        User user = userRepository.findByIdx(userIdx);
         PlaceCategoryDTO.Simples result = new PlaceCategoryDTO.Simples();
         List<PlaceCategoryDTO.Simple> list = new ArrayList<>();
         for(PlaceCategory placeCategory : user.getPlaceCategories()) {

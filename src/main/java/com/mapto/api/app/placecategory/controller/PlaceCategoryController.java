@@ -32,10 +32,10 @@ public class PlaceCategoryController {
     }
 
     @Operation(summary = "get place category list")
-    @GetMapping("/api/v1/app/place_category")
-    public ResponseEntity<ApiResponse> getPlaceCategory(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    @GetMapping("/api/v1/app/place_category/{userIdx}")
+    public ResponseEntity<ApiResponse> getPlaceCategory(@PathVariable Long userIdx) {
         try {
-            return ResponseMessageUtil.successMessage(placeCategoryService.getPlaceCategory(userPrincipal));
+            return ResponseMessageUtil.successMessage(placeCategoryService.getPlaceCategory(userIdx));
         } catch(Exception e) {
             return ResponseMessageUtil.errorMessage(e);
         }
