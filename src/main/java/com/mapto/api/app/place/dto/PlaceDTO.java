@@ -2,6 +2,7 @@ package com.mapto.api.app.place.dto;
 
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.entity.User;
+import com.mapto.api.common.model.RequestPage;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,6 +23,25 @@ public class PlaceDTO {
         private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
+        private String representImg;
+        private LocalDateTime createAt;
+        private LocalDateTime updateAt;
+    }
+
+    @Data
+    public static class Simple {
+        private Long idx;
+        private Long userIdx;
+        private String userNickname;
+        private String userProfileImg;
+        private PlaceCategory category;
+        private String name;
+        private String address;
+        private String description;
+        private Double favorite;
+        private BigDecimal lat;
+        private BigDecimal lng;
+        private String representImg;
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
     }
@@ -36,5 +56,19 @@ public class PlaceDTO {
         private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
+    }
+
+    @Data
+    public static class Search {
+        private String keyword;
+        private String address;
+        private RequestPage requestPage;
+    }
+
+    @Data
+    public static class Simples {
+        private List<Simple> list = new ArrayList<>();
+        private Long totalCount;
+        private boolean last;
     }
 }
