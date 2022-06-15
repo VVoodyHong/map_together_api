@@ -26,6 +26,8 @@ import com.mapto.api.common.model.StatusCode;
 import com.mapto.api.common.util.CheckUtil;
 import com.mapto.api.config.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,7 +95,9 @@ public class PlaceService {
             List<FileDTO.Basic> fileList = fileUploader.upload(files, "place");
             List<File> fileEntities = new ArrayList<>();
             List<PlaceFile> placeFileEntities = new ArrayList<>();
+            boolean isFirst = true;
             for (FileDTO.Basic basic : fileList) {
+                if(isFirst) placeEntity.setRepresentImg(basic.getUrl());
                 File file = File.builder()
                         .name(basic.getName())
                         .type(basic.getType())
@@ -105,7 +109,9 @@ public class PlaceService {
                         .build();
                 fileEntities.add(file);
                 placeFileEntities.add(placeFile);
+                isFirst = false;
             }
+            placeRepository.save(placeEntity);
             fileRepository.saveAll(fileEntities);
             placeFileRepository.saveAll(placeFileEntities);
         }
@@ -176,6 +182,27 @@ public class PlaceService {
             throw new CustomException(StatusCode.CODE_757);
         }
         placeLikeRepository.deleteByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
+    }
+
+    @Transactional(readOnly = true)
+    public PlaceDTO.Simples searchPlace(Long userIdx, PlaceDTO.Search search) throws CustomException {
+        if(CheckUtil.isEmptyString(search.getKeyword())) {
+            throw new CustomException(StatusCode.CODE_761);
+        } else if(CheckUtil.isNullObject(search.getAddress())) {
+            throw new CustomException(StatusCode.CODE_762);
+        } else {
+            Pageable pageable = search.getRequestPage().of();
+            Page<Place> placePage = placeRepository.findByKeywordAndAddress(userIdx, pageable, search.getKeyword(), search.getAddress());
+            PlaceDTO.Simples result = new PlaceDTO.Simples();
+            List<PlaceDTO.Simple> list = new ArrayList<>();
+            for(Place place : placePage) {
+                list.add(place.toPlaceSimpleDTO());
+            }
+            result.setList(list);
+            result.setTotalCount(placePage.getTotalElements());
+            result.setLast(placePage.isLast());
+            return result;
+        }
     }
 }
 

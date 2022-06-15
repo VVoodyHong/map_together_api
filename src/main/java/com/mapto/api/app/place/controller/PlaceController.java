@@ -95,4 +95,16 @@ public class PlaceController {
             return ResponseMessageUtil.errorMessage(e);
         }
     }
+
+    @Operation(summary = "search place")
+    @PostMapping("/api/v1/app/place/search")
+    public ResponseEntity<ApiResponse> searchPlace(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PlaceDTO.Search search) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.searchPlace(userPrincipal.getIdx(), search));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
 }
