@@ -74,9 +74,9 @@ public class UserController {
 
     @Operation(summary = "search user")
     @PostMapping("/api/v1/app/user/search")
-    public ResponseEntity<ApiResponse> searchUser(@RequestBody UserDTO.Search search) {
+    public ResponseEntity<ApiResponse> searchUser(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody UserDTO.Search search) {
         try {
-            return ResponseMessageUtil.successMessage(userService.searchUser(search));
+            return ResponseMessageUtil.successMessage(userService.searchUser(userPrincipal.getIdx(), search));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {
@@ -86,7 +86,7 @@ public class UserController {
 
     @Operation(summary = "user update")
     @PostMapping("/api/v1/app/user")
-    public ResponseEntity<ApiResponse> updateUser(@AuthenticationPrincipal UserPrincipal  userPrincipal, UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<ApiResponse> updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal, UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
             return ResponseMessageUtil.successMessage(userService.updateUser(userPrincipal.getIdx(), userInfo, file));
         } catch(CustomException ce) {

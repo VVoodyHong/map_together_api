@@ -19,17 +19,19 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<User> findByKeyword(Pageable pageable, String keyword) {
+    public Page<User> findByKeyword(Long userIdx, Pageable pageable, String keyword) {
         List<User> list = jpaQueryFactory
                 .selectFrom(user)
-                .where(user.name.contains(keyword).or(user.nickname.contains(keyword)))
+                .where(user.idx.ne(userIdx).and(user.name.contains(keyword).or(user.nickname.contains(keyword))))
+                .orderBy(user.idx.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         int totalSize = jpaQueryFactory
                 .selectFrom(user)
-                .where(user.name.contains(keyword).or(user.nickname.contains(keyword)))
+                .where(user.idx.ne(userIdx).and(user.name.contains(keyword).or(user.nickname.contains(keyword))))
+                .orderBy(user.idx.desc())
                 .fetch()
                 .size();
 

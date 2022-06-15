@@ -95,12 +95,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO.Simples searchUser(UserDTO.Search search) throws CustomException {
+    public UserDTO.Simples searchUser(Long userIdx, UserDTO.Search search) throws CustomException {
         if(CheckUtil.isEmptyString(search.getKeyword())) {
             throw new CustomException(StatusCode.CODE_704);
         } else {
             Pageable pageable = search.getRequestPage().of();
-            Page<User> userPage = userRepository.findByKeyword(pageable, search.getKeyword());
+            Page<User> userPage = userRepository.findByKeyword(userIdx, pageable, search.getKeyword());
             UserDTO.Simples result = new UserDTO.Simples();
             List<UserDTO.Simple> list = new ArrayList<>();
             for(User user : userPage) {

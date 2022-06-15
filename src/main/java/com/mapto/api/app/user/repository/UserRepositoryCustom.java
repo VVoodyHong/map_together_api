@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserRepositoryCustom {
-    Page<User> findByKeyword(Pageable pageable, String keyword);
+    Page<User> findByKeyword(Long userIdx, Pageable pageable, String keyword);
 }
