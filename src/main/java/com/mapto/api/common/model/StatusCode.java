@@ -48,7 +48,12 @@ public enum StatusCode {
     ,CODE_762(762, "올바르지 않은 장소 형식입니다.")
 
     /* file */
-    ,CODE_801(801, "파일 용량이 최대 크기를 초과했습니다.");
+    ,CODE_801(801, "파일 용량이 최대 크기를 초과했습니다.")
+
+    /* follow */
+    ,CODE_851(851, "유저 인덱스가 존재하지 않습니다.")
+    ,CODE_852(852, "팔로우 타입이 존재하지 않습니다.");
+
 
     private final Integer code;
     private final String msg;
