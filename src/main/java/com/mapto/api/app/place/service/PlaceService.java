@@ -120,7 +120,7 @@ public class PlaceService {
 
     @Transactional
     public FileDTO.Simples getPlaceImage(Long placeIdx) throws CustomException {
-        if(placeIdx == null) {
+        if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         }
         List<File> files = fileRepository.findByPlaceIdx(placeIdx);
@@ -135,7 +135,7 @@ public class PlaceService {
 
     @Transactional
     public TagDTO.Simples getPlaceTag(Long placeIdx) throws CustomException {
-        if(placeIdx == null) {
+        if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         }
         List<Tag> tags = tagRepository.findByPlaceIdx(placeIdx);
@@ -150,7 +150,7 @@ public class PlaceService {
 
     @Transactional
     public void createPlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
-        if(placeIdx == null) {
+        if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         }
         User user = userRepository.findByIdx(userPrincipal.getUser().getIdx());
@@ -165,7 +165,7 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceLikeDTO.Simple getPlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
-        if(placeIdx == null) {
+        if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         }
         PlaceLike placeLike = placeLikeRepository.findByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
@@ -178,7 +178,7 @@ public class PlaceService {
 
     @Transactional
     public void deletePlaceLike(UserPrincipal userPrincipal, Long placeIdx) throws CustomException {
-        if(placeIdx == null) {
+        if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         }
         placeLikeRepository.deleteByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
