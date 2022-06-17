@@ -52,7 +52,8 @@ public enum StatusCode {
 
     /* follow */
     ,CODE_851(851, "유저 인덱스가 존재하지 않습니다.")
-    ,CODE_852(852, "팔로우 타입이 존재하지 않습니다.");
+    ,CODE_852(852, "팔로우 타입이 존재하지 않습니다.")
+    ,CODE_853(853, "검색어를 입력해주세요.");
 
 
     private final Integer code;
