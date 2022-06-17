@@ -37,4 +37,24 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         return new PageImpl<>(list, pageable, totalSize);
     }
+
+    @Override
+    public Page<User> findByIdxInAndKeyword(List<Long> userIdxList, String keyword, Pageable pageable) {
+        List<User> list = jpaQueryFactory
+                .selectFrom(user)
+                .where(user.idx.in(userIdxList).and(user.name.contains(keyword).or(user.nickname.contains(keyword))))
+                .orderBy(user.nickname.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        int totalSize = jpaQueryFactory
+                .selectFrom(user)
+                .where(user.idx.in(userIdxList).and(user.name.contains(keyword).or(user.nickname.contains(keyword))))
+                .orderBy(user.nickname.desc())
+                .fetch()
+                .size();
+
+        return new PageImpl<>(list, pageable, totalSize);
+    }
 }
