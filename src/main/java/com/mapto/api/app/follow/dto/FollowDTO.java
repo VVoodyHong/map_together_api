@@ -28,8 +28,8 @@ public class FollowDTO {
 
     @Data
     public static class Count {
-        private Integer following;
-        private Integer follower;
+        private Long following;
+        private Long follower;
     }
 
     @Data
