@@ -8,7 +8,6 @@ import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
 import com.mapto.api.common.model.CustomException;
 import com.mapto.api.common.model.StatusCode;
-import com.mapto.api.common.model.type.FollowType;
 import com.mapto.api.common.util.CheckUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,28 +50,10 @@ public class FollowService {
         } else if(CheckUtil.isNullObject(search.getKeyword())) {
             throw new CustomException(StatusCode.CODE_853);
         } else {
-            List<Follow> followList = followRepository.findByUserIdx(search.getUserIdx(), search.getFollowType());
-            List<Long> userIdxList = new ArrayList<>();
-            for(Follow follow : followList) {
-                if(search.getFollowType().equals(FollowType.FOLLOWING)) {
-                    userIdxList.add(follow.getToUser().getIdx());
-                } else {
-                    userIdxList.add(follow.getFromUser().getIdx());
-                }
-            }
             Pageable pageable = search.getRequestPage().of();
-            Page<User> userPage = userRepository.findByIdxInAndKeyword(userIdxList, search.getKeyword(), pageable);
+            Page<UserDTO.Simple> userPage = userRepository.findByUserIdxAndFollowTypeAndKeyword(search.getUserIdx(), search.getFollowType(), search.getKeyword(), pageable);
             FollowDTO.Simples result = new FollowDTO.Simples();
-            List<UserDTO.Simple> list = new ArrayList<>();
-            for(User user : userPage) {
-                UserDTO.Simple simple = new UserDTO.Simple();
-                simple.setIdx(user.getIdx());
-                simple.setName(user.getName());
-                simple.setNickname(user.getNickname());
-                simple.setProfileImg(user.getProfileImg());
-                list.add(simple);
-            }
-            result.setList(list);
+            result.setList(userPage.getContent());
             result.setTotalCount(userPage.getTotalElements());
             result.setLast(userPage.isLast());
             return result;
@@ -86,8 +65,8 @@ public class FollowService {
         if(CheckUtil.isNullObject(userIdx)) {
             throw new CustomException(StatusCode.CODE_851);
         } else {
-            int following = followRepository.findByUserIdx(userIdx, FollowType.FOLLOWING).size();
-            int follower = followRepository.findByUserIdx(userIdx, FollowType.FOLLOWER).size();
+            Long following = followRepository.countByFromUserIdx(userIdx);
+            Long follower = followRepository.countByToUserIdx(userIdx);
             FollowDTO.Count count = new FollowDTO.Count();
             count.setFollowing(following);
             count.setFollower(follower);
