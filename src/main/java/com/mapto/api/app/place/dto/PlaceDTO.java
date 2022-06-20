@@ -3,6 +3,7 @@ package com.mapto.api.app.place.dto;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.common.model.RequestPage;
+import com.mapto.api.common.model.type.PlaceCategoryType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -34,7 +35,9 @@ public class PlaceDTO {
         private Long userIdx;
         private String userNickname;
         private String userProfileImg;
-        private PlaceCategory category;
+        private Long placeCategoryIdx;
+        private String placeCategoryName;
+        private PlaceCategoryType placeCategoryType;
         private String name;
         private String address;
         private String description;
