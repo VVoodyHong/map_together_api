@@ -1,12 +1,11 @@
 package com.mapto.api.app.user.repository;
 
-import com.mapto.api.app.user.entity.User;
+import com.mapto.api.app.user.dto.UserDTO;
+import com.mapto.api.common.model.type.FollowType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface UserRepositoryCustom {
-    Page<User> findByKeyword(Long userIdx, Pageable pageable, String keyword);
-    Page<User> findByIdxInAndKeyword(List<Long> userIdxList, String keyword, Pageable pageable);
+    Page<UserDTO.Simple> findByKeyword(Long userIdx, Pageable pageable, String keyword);
+    Page<UserDTO.Simple> findByUserIdxAndFollowTypeAndKeyword(Long userIdx, FollowType followType, String keyword, Pageable pageable);
 }

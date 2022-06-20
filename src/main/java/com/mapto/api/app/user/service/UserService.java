@@ -19,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -100,13 +98,9 @@ public class UserService {
             throw new CustomException(StatusCode.CODE_704);
         } else {
             Pageable pageable = search.getRequestPage().of();
-            Page<User> userPage = userRepository.findByKeyword(userIdx, pageable, search.getKeyword());
+            Page<UserDTO.Simple> userPage = userRepository.findByKeyword(userIdx, pageable, search.getKeyword());
             UserDTO.Simples result = new UserDTO.Simples();
-            List<UserDTO.Simple> list = new ArrayList<>();
-            for(User user : userPage) {
-                list.add(user.toUserSimpleDTO());
-            }
-            result.setList(list);
+            result.setList(userPage.getContent());
             result.setTotalCount(userPage.getTotalElements());
             result.setLast(userPage.isLast());
             return result;
