@@ -192,13 +192,9 @@ public class PlaceService {
             throw new CustomException(StatusCode.CODE_762);
         } else {
             Pageable pageable = search.getRequestPage().of();
-            Page<Place> placePage = placeRepository.findByKeywordAndAddress(userIdx, pageable, search.getKeyword(), search.getAddress());
+            Page<PlaceDTO.Simple> placePage = placeRepository.findByKeywordAndAddress(userIdx, pageable, search.getKeyword(), search.getAddress());
             PlaceDTO.Simples result = new PlaceDTO.Simples();
-            List<PlaceDTO.Simple> list = new ArrayList<>();
-            for(Place place : placePage) {
-                list.add(place.toPlaceSimpleDTO());
-            }
-            result.setList(list);
+            result.setList(placePage.getContent());
             result.setTotalCount(placePage.getTotalElements());
             result.setLast(placePage.isLast());
             return result;
