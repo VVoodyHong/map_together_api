@@ -51,13 +51,9 @@ public class PlaceReplyService {
             throw new CustomException(StatusCode.CODE_759);
         }
         Pageable pageable = requestPage.of();
-        Page<PlaceReply> placeReplyPage = placeReplyRepository.findByRequestPage(pageable, placeIdx);
+        Page<PlaceReplyDTO.Simple> placeReplyPage = placeReplyRepository.findByPlaceIdx(pageable, placeIdx);
         PlaceReplyDTO.Simples result = new PlaceReplyDTO.Simples();
-        List<PlaceReplyDTO.Simple> list = new ArrayList<>();
-        for(PlaceReply placeReply : placeReplyPage) {
-            list.add(placeReply.toPlaceReplySimpleDTO());
-        }
-        result.setList(list);
+        result.setList(placeReplyPage.getContent());
         result.setTotalCount(placeReplyPage.getTotalElements());
         result.setLast(placeReplyPage.isLast());
         return result;
