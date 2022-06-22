@@ -46,18 +46,18 @@ public class UserService {
     public UserDTO.Basic updateUser(Long userIdx, UserDTO.Update userInfo, MultipartFile file) throws CustomException, IOException {
         User user = userRepository.findByIdx(userIdx);
         user.setNickname(userInfo.getNickname());
-        if(userInfo.getName() != null) user.setName(userInfo.getName());
-        if(userInfo.getIntroduce() != null) user.setIntroduce(userInfo.getIntroduce());
-        if(userInfo.getLat() != null) user.setLat(userInfo.getLat());
-        if(userInfo.getLng() != null) user.setLng(userInfo.getLng());
-        if(userInfo.getZoom() != null) user.setZoom(userInfo.getZoom());
+        if(!CheckUtil.isNullObject(userInfo.getName())) user.setName(userInfo.getName());
+        if(!CheckUtil.isNullObject(userInfo.getIntroduce())) user.setIntroduce(userInfo.getIntroduce());
+        if(!CheckUtil.isNullObject(userInfo.getLat())) user.setLat(userInfo.getLat());
+        if(!CheckUtil.isNullObject(userInfo.getLng())) user.setLng(userInfo.getLng());
+        if(!CheckUtil.isNullObject(userInfo.getZoom())) user.setZoom(userInfo.getZoom());
         // set default image
-        if(userInfo.getProfileImg() != null && userInfo.getProfileImg().equals("default")) {
+        if(!CheckUtil.isNullObject(userInfo.getProfileImg()) && userInfo.getProfileImg().equals("default")) {
             user.setProfileImg(null);
         }
         // set image
-        if(file != null) {
-            if(user.getProfileImg() != null) {
+        if(!CheckUtil.isNullObject(file)) {
+            if(!CheckUtil.isNullObject(userInfo.getIntroduce())) {
                 boolean deleted = fileUploader.delete(user.getProfileImg());
                 if(deleted) {
                     FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
