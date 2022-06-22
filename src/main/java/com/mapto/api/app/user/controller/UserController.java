@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @Operation(summary = "user update")
-    @PostMapping("/api/v1/app/user")
+    @PutMapping("/api/v1/app/user")
     public ResponseEntity<ApiResponse> updateUser(@AuthenticationPrincipal UserPrincipal userPrincipal, UserDTO.Update userInfo, @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
             return ResponseMessageUtil.successMessage(userService.updateUser(userPrincipal.getIdx(), userInfo, file));
