@@ -119,6 +119,72 @@ public class PlaceService {
     }
 
     @Transactional
+    public PlaceDTO.Basic updatePlace(PlaceDTO.Update placeInfo) throws CustomException, IOException {
+        if(CheckUtil.isEmptyString(placeInfo.getName())) {
+            throw new CustomException(StatusCode.CODE_753);
+        } else if(CheckUtil.isEmptyString(placeInfo.getAddress())) {
+            throw new CustomException(StatusCode.CODE_754);
+        } else if(placeInfo.getCategoryIdx() == -1) {
+            throw new CustomException(StatusCode.CODE_755);
+        }
+        Place place = placeRepository.findByIdx(placeInfo.getIdx());
+        PlaceCategory placeCategory = placeCategoryRepository.findByIdx(placeInfo.getCategoryIdx());
+        place.setCategory(placeCategory);
+        place.setName(placeInfo.getName());
+        place.setAddress(placeInfo.getAddress());
+        place.setDescription(placeInfo.getDescription());
+        place.setFavorite(placeInfo.getFavorite());
+        place.setLat(placeInfo.getLat());
+        place.setLng(placeInfo.getLng());
+        Place placeEntity = placeRepository.save(place);
+
+        for(TagDTO.Simple deleteTag : placeInfo.getDeleteTags()) {
+            placeTagRepository.deleteByPlaceIdxAndTagIdx(placeEntity.getIdx(), deleteTag.getIdx());
+        }
+
+        List<Tag> tagEntities = new ArrayList<>();
+        List<PlaceTag> placeTagEntities = new ArrayList<>();
+        for(TagDTO.Simple addTag : placeInfo.getAddTags()) {
+            Optional<Tag> findTag = tagRepository.findTagByName(addTag.getName());
+            Tag tag = findTag.orElseGet(() -> Tag.builder()
+                    .name(addTag.getName())
+                    .build());
+            PlaceTag placeTag = PlaceTag.builder()
+                    .place(placeEntity)
+                    .tag(tag)
+                    .build();
+            tagEntities.add(tag);
+            placeTagEntities.add(placeTag);
+        }
+        tagRepository.saveAll(tagEntities);
+        placeTagRepository.saveAll(placeTagEntities);
+
+        if(placeInfo.getFiles().size() != 0) {
+            boolean deleted = false;
+            for(FileDTO.Simple simple : placeInfo.getFiles()) {
+                deleted = fileUploader.delete(simple.getUrl());
+                placeFileRepository.deleteByPlaceIdxAndFileIdx(placeInfo.getIdx(), simple.getIdx());
+                fileRepository.deleteByIdx(simple.getIdx());
+            }
+            if(deleted) {
+                Optional<File> findFile =  fileRepository.findFirstByPlaceIdx(placeInfo.getIdx());
+                findFile.ifPresent(file -> placeEntity.setRepresentImg(file.getUrl()));
+            }
+            placeRepository.save(placeEntity);
+        }
+        return placeEntity.toPlaceBasicDTO();
+    }
+
+    @Transactional
+    public void deletePlace(Long placeIdx) throws CustomException {
+        if(CheckUtil.isNullObject(placeIdx)) {
+            throw new CustomException(StatusCode.CODE_757);
+        } else {
+            placeRepository.deleteByIdx(placeIdx);
+        }
+    }
+
+    @Transactional
     public FileDTO.Simples getPlaceImage(Long placeIdx) throws CustomException {
         if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);

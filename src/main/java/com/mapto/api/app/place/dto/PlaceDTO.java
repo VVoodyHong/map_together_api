@@ -1,6 +1,8 @@
 package com.mapto.api.app.place.dto;
 
+import com.mapto.api.app.file.dto.FileDTO;
 import com.mapto.api.app.placecategory.entity.PlaceCategory;
+import com.mapto.api.app.tag.dto.TagDTO;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.common.model.RequestPage;
 import com.mapto.api.common.model.type.PlaceCategoryType;
@@ -56,6 +58,21 @@ public class PlaceDTO {
         private String address;
         private String description;
         private List<String> tags = new ArrayList<>();
+        private Double favorite;
+        private BigDecimal lat;
+        private BigDecimal lng;
+    }
+
+    @Data
+    public static class Update {
+        private Long idx;
+        private Long categoryIdx;
+        private String name;
+        private String address;
+        private String description;
+        private List<TagDTO.Simple> addTags = new ArrayList<>();
+        private List<TagDTO.Simple> deleteTags = new ArrayList<>();
+        private List<FileDTO.Simple> files = new ArrayList<>();
         private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;

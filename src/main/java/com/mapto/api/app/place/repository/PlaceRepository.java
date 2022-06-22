@@ -9,4 +9,5 @@ import java.util.List;
 public interface PlaceRepository extends CrudRepository<Place, Long>, PlaceRepositoryCustom{
     List<Place> findByUser(User user);
     Place findByIdx(Long idx);
+    void deleteByIdx(Long idx);
 }
