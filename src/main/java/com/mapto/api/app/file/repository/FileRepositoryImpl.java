@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.mapto.api.app.file.entity.QFile.file;
 import static com.mapto.api.app.place.entity.QPlaceFile.placeFile;
@@ -28,5 +29,17 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
                                 .where(placeFile.place.idx.eq(placeIdx))
                         ))
                 .fetch();
+    }
+
+    @Override
+    public Optional<File> findFirstByPlaceIdx(Long placeIdx) {
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(file)
+                .where(file.idx.in(
+                        JPAExpressions.select(placeFile.file.idx)
+                                .from(placeFile)
+                                .where(placeFile.place.idx.eq(placeIdx))
+                ))
+                .fetchFirst());
     }
 }
