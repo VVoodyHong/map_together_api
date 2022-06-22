@@ -56,6 +56,20 @@ public class Place extends DateAudit {
         this.representImg = representImg;
     }
 
+    public void setCategory(PlaceCategory category) { this.category = category; }
+
+    public void setName(String name) { this.name = name; }
+
+    public void setAddress(String address) { this.address = address; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public void setFavorite(Double favorite) { this.favorite = favorite; }
+
+    public void setLat(BigDecimal lat) { this.lat = lat; }
+
+    public void setLng(BigDecimal lng) { this.lng = lng; }
+
     public void setRepresentImg(String representImg) { this.representImg = representImg; }
 
     public PlaceDTO.Basic toPlaceBasicDTO() {
