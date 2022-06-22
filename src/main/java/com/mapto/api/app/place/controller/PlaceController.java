@@ -34,6 +34,31 @@ public class PlaceController {
         }
     }
 
+    @Operation(summary = "update place")
+    @PutMapping("/api/v1/app/place")
+    public ResponseEntity<ApiResponse> updatePlace( PlaceDTO.Update placeInfo) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.updatePlace(placeInfo));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "delete place")
+    @DeleteMapping("/api/v1/app/place/{placeIdx}")
+    public ResponseEntity<ApiResponse> deletePlace(@PathVariable Long placeIdx) {
+        try {
+            placeService.deletePlace(placeIdx);
+            return ResponseMessageUtil.successMessage();
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
     @Operation(summary = "get place images")
     @GetMapping("/api/v1/app/place/image/{placeIdx}")
     public ResponseEntity<ApiResponse> getPlaceImage(@PathVariable Long placeIdx) {
