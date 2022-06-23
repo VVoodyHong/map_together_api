@@ -36,7 +36,7 @@ public class PlaceController {
 
     @Operation(summary = "update place")
     @PutMapping("/api/v1/app/place")
-    public ResponseEntity<ApiResponse> updatePlace( PlaceDTO.Update placeInfo) {
+    public ResponseEntity<ApiResponse> updatePlace(@RequestBody PlaceDTO.Update placeInfo) {
         try {
             return ResponseMessageUtil.successMessage(placeService.updatePlace(placeInfo));
         } catch(CustomException ce) {
