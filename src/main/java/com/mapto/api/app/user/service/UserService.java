@@ -57,7 +57,7 @@ public class UserService {
         }
         // set image
         if(!CheckUtil.isNullObject(file)) {
-            if(!CheckUtil.isNullObject(userInfo.getIntroduce())) {
+            if(!CheckUtil.isNullObject(user.getProfileImg())) {
                 boolean deleted = fileUploader.delete(user.getProfileImg());
                 if(deleted) {
                     FileDTO.Basic profileImgFile = fileUploader.upload(file, "profile");
