@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -159,16 +160,20 @@ public class PlaceService {
         tagRepository.saveAll(tagEntities);
         placeTagRepository.saveAll(placeTagEntities);
 
-        if(placeInfo.getFiles().size() != 0) {
+        if(placeInfo.getDeleteFiles().size() != 0) {
             boolean deleted = false;
-            for(FileDTO.Simple simple : placeInfo.getFiles()) {
+            for(FileDTO.Simple simple : placeInfo.getDeleteFiles()) {
                 deleted = fileUploader.delete(simple.getUrl());
                 placeFileRepository.deleteByPlaceIdxAndFileIdx(placeInfo.getIdx(), simple.getIdx());
                 fileRepository.deleteByIdx(simple.getIdx());
             }
             if(deleted) {
                 Optional<File> findFile =  fileRepository.findFirstByPlaceIdx(placeInfo.getIdx());
-                findFile.ifPresent(file -> placeEntity.setRepresentImg(file.getUrl()));
+                if(findFile.isPresent()) {
+                    placeEntity.setRepresentImg(findFile.get().getUrl());
+                } else {
+                    placeEntity.setRepresentImg(null);
+                }
             }
             placeRepository.save(placeEntity);
         }
@@ -176,11 +181,16 @@ public class PlaceService {
     }
 
     @Transactional
-    public void deletePlace(Long placeIdx) throws CustomException {
+    public void deletePlace(Long placeIdx) throws CustomException, UnsupportedEncodingException {
         if(CheckUtil.isNullObject(placeIdx)) {
             throw new CustomException(StatusCode.CODE_757);
         } else {
+            List<File> files = fileRepository.findByPlaceIdx(placeIdx);
             placeRepository.deleteByIdx(placeIdx);
+            fileRepository.deleteByPlaceIdx(placeIdx);
+            for(File file : files) {
+                fileUploader.delete(file.getUrl());
+            }
         }
     }
 
