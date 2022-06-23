@@ -72,7 +72,7 @@ public class PlaceDTO {
         private String description;
         private List<TagDTO.Simple> addTags = new ArrayList<>();
         private List<TagDTO.Simple> deleteTags = new ArrayList<>();
-        private List<FileDTO.Simple> files = new ArrayList<>();
+        private List<FileDTO.Simple> deleteFiles = new ArrayList<>();
         private Double favorite;
         private BigDecimal lat;
         private BigDecimal lng;
