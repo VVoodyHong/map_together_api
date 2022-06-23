@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface FileRepositoryCustom {
     List<File> findByPlaceIdx(Long placeIdx);
     Optional<File> findFirstByPlaceIdx(Long placeIdx);
+    void deleteByPlaceIdx(Long placeIdx);
 }

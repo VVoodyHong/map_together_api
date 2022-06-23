@@ -27,7 +27,7 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
                         JPAExpressions.select(placeFile.file.idx)
                                 .from(placeFile)
                                 .where(placeFile.place.idx.eq(placeIdx))
-                        ))
+                ))
                 .fetch();
     }
 
@@ -41,5 +41,17 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
                                 .where(placeFile.place.idx.eq(placeIdx))
                 ))
                 .fetchFirst());
+    }
+
+    @Override
+    public void deleteByPlaceIdx(Long placeIdx) {
+        jpaQueryFactory
+                .delete(file)
+                .where(file.idx.in(
+                        JPAExpressions.select(placeFile.file.idx)
+                                .from(placeFile)
+                                .where(placeFile.place.idx.eq(placeIdx))
+                ))
+                .execute();
     }
 }
