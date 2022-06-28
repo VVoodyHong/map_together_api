@@ -15,6 +15,8 @@ import java.util.List;
 import static com.mapto.api.app.place.entity.QPlace.place;
 import static com.mapto.api.app.place.entity.QPlaceTag.placeTag;
 import static com.mapto.api.app.tag.entity.QTag.tag;
+import static com.mapto.api.app.place.entity.QPlaceLikeGroupByPlaceIdx.placeLikeGroupByPlaceIdx;
+import static com.mapto.api.app.place.entity.QPlaceReplyGroupByPlaceIdx.placeReplyGroupByPlaceIdx;
 
 @Repository
 @RequiredArgsConstructor
@@ -77,6 +79,46 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                                 )
                         )
                 ).and(place.address.contains(address)))
+                .fetchFirst();
+
+        return new PageImpl<>(list, pageable, totalSize);
+    }
+
+    @Override
+    public Page<PlaceDTO.Simple> findByUserIdx(Long userIdx, String address, Pageable pageable) {
+        List<PlaceDTO.Simple> list = jpaQueryFactory
+                .select(Projections.fields(PlaceDTO.Simple.class,
+                        place.idx,
+                        place.user.idx.as("userIdx"),
+                        place.user.nickname.as("userNickname"),
+                        place.user.profileImg.as("userProfileImg"),
+                        place.category.idx.as("placeCategoryIdx"),
+                        place.category.name.as("placeCategoryName"),
+                        place.category.type.as("placeCategoryType"),
+                        place.name,
+                        place.address,
+                        place.description,
+                        place.favorite,
+                        place.lat,
+                        place.lng,
+                        place.representImg,
+                        placeLikeGroupByPlaceIdx.likeCount.as("likeCount"),
+                        placeReplyGroupByPlaceIdx.replyCount.as("replyCount"),
+                        place.createAt,
+                        place.updateAt))
+                .from(place)
+                .leftJoin(placeLikeGroupByPlaceIdx).on(placeLikeGroupByPlaceIdx.placeIdx.eq(place.idx))
+                .leftJoin(placeReplyGroupByPlaceIdx).on(placeReplyGroupByPlaceIdx.placeIdx.eq(place.idx))
+                .where(place.user.idx.ne(userIdx).and(place.address.contains(address)))
+                .orderBy(place.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long totalSize = jpaQueryFactory
+                .select(place.count())
+                .from(place)
+                .where(place.user.idx.ne(userIdx))
                 .fetchFirst();
 
         return new PageImpl<>(list, pageable, totalSize);

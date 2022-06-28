@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface PlaceRepositoryCustom {
     Page<PlaceDTO.Simple> findByKeywordAndAddress(Long userIdx, Pageable pageable, String keyword, String address);
+    Page<PlaceDTO.Simple> findByUserIdx(Long userIdx, String address, Pageable pageable);
 }
