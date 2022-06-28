@@ -47,6 +47,8 @@ public class PlaceDTO {
         private BigDecimal lat;
         private BigDecimal lng;
         private String representImg;
+        private Long likeCount;
+        private Long replyCount;
         private LocalDateTime createAt;
         private LocalDateTime updateAt;
     }

@@ -22,6 +22,7 @@ import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
 import com.mapto.api.common.file.FileUploader;
 import com.mapto.api.common.model.CustomException;
+import com.mapto.api.common.model.RequestPage;
 import com.mapto.api.common.model.StatusCode;
 import com.mapto.api.common.util.CheckUtil;
 import com.mapto.api.config.security.UserPrincipal;
@@ -117,6 +118,34 @@ public class PlaceService {
             placeFileRepository.saveAll(placeFileEntities);
         }
         return placeEntity.toPlaceBasicDTO();
+    }
+
+    @Transactional(readOnly = true)
+    public PlaceDTO.Simples searchPlace(Long userIdx, PlaceDTO.Search search) throws CustomException {
+        if(CheckUtil.isEmptyString(search.getKeyword())) {
+            throw new CustomException(StatusCode.CODE_761);
+        } else if(CheckUtil.isNullObject(search.getAddress())) {
+            throw new CustomException(StatusCode.CODE_762);
+        } else {
+            Pageable pageable = search.getRequestPage().of();
+            Page<PlaceDTO.Simple> placePage = placeRepository.findByKeywordAndAddress(userIdx, pageable, search.getKeyword(), search.getAddress());
+            PlaceDTO.Simples result = new PlaceDTO.Simples();
+            result.setList(placePage.getContent());
+            result.setTotalCount(placePage.getTotalElements());
+            result.setLast(placePage.isLast());
+            return result;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public PlaceDTO.Simples newsPlace(Long userIdx, PlaceDTO.Search search) {
+        Pageable pageable = search.getRequestPage().of();
+        Page<PlaceDTO.Simple> placePage = placeRepository.findByUserIdx(userIdx, search.getAddress(), pageable);
+        PlaceDTO.Simples result = new PlaceDTO.Simples();
+        result.setList(placePage.getContent());
+        result.setTotalCount(placePage.getTotalElements());
+        result.setLast(placePage.isLast());
+        return result;
     }
 
     @Transactional
@@ -258,23 +287,6 @@ public class PlaceService {
             throw new CustomException(StatusCode.CODE_757);
         }
         placeLikeRepository.deleteByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
-    }
-
-    @Transactional(readOnly = true)
-    public PlaceDTO.Simples searchPlace(Long userIdx, PlaceDTO.Search search) throws CustomException {
-        if(CheckUtil.isEmptyString(search.getKeyword())) {
-            throw new CustomException(StatusCode.CODE_761);
-        } else if(CheckUtil.isNullObject(search.getAddress())) {
-            throw new CustomException(StatusCode.CODE_762);
-        } else {
-            Pageable pageable = search.getRequestPage().of();
-            Page<PlaceDTO.Simple> placePage = placeRepository.findByKeywordAndAddress(userIdx, pageable, search.getKeyword(), search.getAddress());
-            PlaceDTO.Simples result = new PlaceDTO.Simples();
-            result.setList(placePage.getContent());
-            result.setTotalCount(placePage.getTotalElements());
-            result.setLast(placePage.isLast());
-            return result;
-        }
     }
 }
 

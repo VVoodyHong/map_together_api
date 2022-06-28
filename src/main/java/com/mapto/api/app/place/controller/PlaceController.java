@@ -34,6 +34,28 @@ public class PlaceController {
         }
     }
 
+    @Operation(summary = "search place")
+    @PostMapping("/api/v1/app/place/search")
+    public ResponseEntity<ApiResponse> searchPlace(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PlaceDTO.Search search) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.searchPlace(userPrincipal.getIdx(), search));
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
+    @Operation(summary = "news place")
+    @PostMapping("/api/v1/app/place/news")
+    public ResponseEntity<ApiResponse> newsPlace(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PlaceDTO.Search search) {
+        try {
+            return ResponseMessageUtil.successMessage(placeService.newsPlace(userPrincipal.getIdx(), search));
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
     @Operation(summary = "update place")
     @PutMapping("/api/v1/app/place")
     public ResponseEntity<ApiResponse> updatePlace(@RequestBody PlaceDTO.Update placeInfo) {
@@ -114,18 +136,6 @@ public class PlaceController {
         try {
             placeService.deletePlaceLike(userPrincipal, placeIdx);
             return ResponseMessageUtil.successMessage();
-        } catch(CustomException ce) {
-            return ResponseMessageUtil.errorMessage(ce.getCode());
-        } catch(Exception e) {
-            return ResponseMessageUtil.errorMessage(e);
-        }
-    }
-
-    @Operation(summary = "search place")
-    @PostMapping("/api/v1/app/place/search")
-    public ResponseEntity<ApiResponse> searchPlace(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PlaceDTO.Search search) {
-        try {
-            return ResponseMessageUtil.successMessage(placeService.searchPlace(userPrincipal.getIdx(), search));
         } catch(CustomException ce) {
             return ResponseMessageUtil.errorMessage(ce.getCode());
         } catch(Exception e) {
