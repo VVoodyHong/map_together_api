@@ -1,6 +1,8 @@
 package com.mapto.api.app.user.service;
 
 import com.mapto.api.app.file.dto.FileDTO;
+import com.mapto.api.app.file.entity.File;
+import com.mapto.api.app.file.repository.FileRepository;
 import com.mapto.api.app.user.dto.UserDTO;
 import com.mapto.api.app.user.entity.User;
 import com.mapto.api.app.user.repository.UserRepository;
@@ -19,11 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final FileRepository fileRepository;
     private final FileUploader fileUploader;
 
     @Transactional
@@ -132,5 +137,14 @@ public class UserService {
         } else {
             throw new CustomException(StatusCode.CODE_609);
         }
+    }
+    @Transactional
+    public void deleteUser(Long userIdx) throws UnsupportedEncodingException {
+        List<File> files = fileRepository.findByUserIdx(userIdx);
+        fileRepository.deleteAllByUserIdx(userIdx);
+        for(File file : files) {
+            fileUploader.delete(file.getUrl());
+        }
+        userRepository.deleteByIdx(userIdx);
     }
 }

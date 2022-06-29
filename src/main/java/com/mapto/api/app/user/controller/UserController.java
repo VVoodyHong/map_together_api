@@ -95,4 +95,15 @@ public class UserController {
             return ResponseMessageUtil.errorMessage(e);
         }
     }
+
+    @Operation(summary = "user delete")
+    @DeleteMapping("/api/v1/app/user")
+    public ResponseEntity<ApiResponse> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        try {
+            userService.deleteUser(userPrincipal.getIdx());
+            return ResponseMessageUtil.successMessage();
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
 }

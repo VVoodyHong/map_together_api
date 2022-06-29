@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import static com.mapto.api.app.file.entity.QFile.file;
 import static com.mapto.api.app.place.entity.QPlaceFile.placeFile;
+import static com.mapto.api.app.place.entity.QPlace.place;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,6 +52,36 @@ public class FileRepositoryImpl implements FileRepositoryCustom {
                         JPAExpressions.select(placeFile.file.idx)
                                 .from(placeFile)
                                 .where(placeFile.place.idx.eq(placeIdx))
+                ))
+                .execute();
+    }
+
+    @Override
+    public List<File> findByUserIdx(Long userIdx) {
+        return jpaQueryFactory
+                .selectFrom(file)
+                .where(file.idx.in(
+                        JPAExpressions.select(placeFile.file.idx)
+                                .from(placeFile)
+                                .where(placeFile.place.idx.in(
+                                        JPAExpressions.select(place.idx)
+                                                .from(place)
+                                                .where(place.user.idx.eq(userIdx))))
+                ))
+                .fetch();
+    }
+
+    @Override
+    public void deleteAllByUserIdx(Long userIdx) {
+        jpaQueryFactory
+                .delete(file)
+                .where(file.idx.in(
+                        JPAExpressions.select(placeFile.file.idx)
+                                .from(placeFile)
+                                .where(placeFile.place.idx.in(
+                                        JPAExpressions.select(place.idx)
+                                                .from(place)
+                                                .where(place.user.idx.eq(userIdx))))
                 ))
                 .execute();
     }
