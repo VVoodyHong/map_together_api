@@ -96,6 +96,19 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "user password update")
+    @PutMapping("/api/v1/app/user/password")
+    public ResponseEntity<ApiResponse> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody UserDTO.Password userInfo) {
+        try {
+            userService.updatePassword(userPrincipal.getIdx(), userInfo);
+            return ResponseMessageUtil.successMessage();
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
+
     @Operation(summary = "user delete")
     @DeleteMapping("/api/v1/app/user")
     public ResponseEntity<ApiResponse> deleteUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {

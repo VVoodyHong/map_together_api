@@ -2,6 +2,7 @@ package com.mapto.api.app.user.dto;
 
 import com.mapto.api.app.place.dto.PlaceDTO;
 import com.mapto.api.common.model.RequestPage;
+import com.mapto.api.common.model.type.LoginType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class UserDTO {
         private String nickname;
         private String profileImg;
         private String introduce;
+        private LoginType loginType;
         private BigDecimal lat;
         private BigDecimal lng;
         private BigDecimal zoom;
@@ -50,6 +52,13 @@ public class UserDTO {
         private BigDecimal lat;
         private BigDecimal lng;
         private BigDecimal zoom;
+    }
+
+    @Data
+    public static class Password {
+        private String currentPassword;
+        private String newPassword;
+        private String confirmNewPassword;
     }
 
     @Data

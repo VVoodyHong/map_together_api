@@ -78,6 +78,25 @@ public class UserService {
         return userRepository.save(user).toUserBasicDTO();
     }
 
+    @Transactional
+    public void updatePassword(Long userIdx, UserDTO.Password userInfo) throws CustomException {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = userRepository.findByIdx(userIdx);
+        boolean isMatch = passwordEncoder.matches(userInfo.getCurrentPassword(), user.getPassword());
+        if (isMatch) {
+            if(CheckUtil.isEmptyString(userInfo.getNewPassword()) || CheckUtil.isEmptyString(userInfo.getConfirmNewPassword())) {
+                throw new CustomException(StatusCode.CODE_603);
+            } else if (!userInfo.getNewPassword().equals(userInfo.getConfirmNewPassword())) {
+                throw new CustomException(StatusCode.CODE_611);
+            }  else {
+                user.setPassword(passwordEncoder.encode(userInfo.getNewPassword()));
+                userRepository.save(user);
+            }
+        } else {
+            throw new CustomException(StatusCode.CODE_610);
+        }
+    }
+
     // find me
     @Transactional(readOnly = true)
     public UserDTO.Basic readUser(UserPrincipal userPrincipal) throws CustomException {
