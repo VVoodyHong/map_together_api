@@ -73,6 +73,7 @@ public class PlaceService {
                 .favorite(placeInfo.getFavorite())
                 .lat(placeInfo.getLat())
                 .lng(placeInfo.getLng())
+                .viewCnt(0L)
                 .build();
         Place placeEntity = placeRepository.save(place);
 
