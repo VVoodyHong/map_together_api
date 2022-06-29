@@ -288,5 +288,14 @@ public class PlaceService {
         }
         placeLikeRepository.deleteByUserIdxAndPlaceIdx(userPrincipal.getUser().getIdx(), placeIdx);
     }
+
+    @Transactional
+    public void updatePlaceViewCnt(Long placeIdx) throws CustomException {
+        if(CheckUtil.isNullObject(placeIdx)) {
+            throw new CustomException(StatusCode.CODE_757);
+        }
+        Place place = placeRepository.findByIdx(placeIdx);
+        place.setViewCnt(place.getViewCnt() + 1);
+    }
 }
 

@@ -142,4 +142,17 @@ public class PlaceController {
             return ResponseMessageUtil.errorMessage(e);
         }
     }
+
+    @Operation(summary = "update place view count")
+    @PutMapping("/api/v1/app/place/viewCnt/{placeIdx}")
+    public ResponseEntity<ApiResponse> updatePlaceViewCnt(@PathVariable Long placeIdx) {
+        try {
+            placeService.updatePlaceViewCnt(placeIdx);
+            return ResponseMessageUtil.successMessage();
+        } catch(CustomException ce) {
+            return ResponseMessageUtil.errorMessage(ce.getCode());
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
 }

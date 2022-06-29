@@ -30,6 +30,7 @@ public class Place extends DateAudit {
     private BigDecimal lat;
     private BigDecimal lng;
     private String representImg;
+    private Long viewCnt;
 
     @Builder
     public Place(
@@ -42,7 +43,8 @@ public class Place extends DateAudit {
             Double favorite,
             BigDecimal lat,
             BigDecimal lng,
-            String representImg
+            String representImg,
+            Long viewCnt
     ) {
         this.idx = idx;
         this.user = user;
@@ -54,6 +56,7 @@ public class Place extends DateAudit {
         this.lat = lat;
         this.lng = lng;
         this.representImg = representImg;
+        this.viewCnt = viewCnt;
     }
 
     public void setCategory(PlaceCategory category) { this.category = category; }
@@ -71,6 +74,8 @@ public class Place extends DateAudit {
     public void setLng(BigDecimal lng) { this.lng = lng; }
 
     public void setRepresentImg(String representImg) { this.representImg = representImg; }
+
+    public void setViewCnt(Long viewCnt) { this.viewCnt = viewCnt; }
 
     public PlaceDTO.Basic toPlaceBasicDTO() {
         return new ModelMapper().map(this, PlaceDTO.Basic.class);
