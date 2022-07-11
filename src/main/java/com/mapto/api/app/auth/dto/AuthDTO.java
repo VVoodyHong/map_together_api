@@ -17,4 +17,10 @@ public class AuthDTO {
         private Integer osVersion;
         private String deviceId;
     }
+
+    @Data
+    public static class Email {
+        private String email;
+        private String code;
+    }
 }

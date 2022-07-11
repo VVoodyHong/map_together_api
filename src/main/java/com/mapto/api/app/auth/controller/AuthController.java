@@ -63,4 +63,13 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "email authentication")
+    @PostMapping("api/v1/app/auth/email")
+    public ResponseEntity<ApiResponse> authEmail(@RequestBody AuthDTO.Email emailInfo) {
+        try {
+            return ResponseMessageUtil.successMessage(authService.authEmail(emailInfo));
+        } catch(Exception e) {
+            return ResponseMessageUtil.errorMessage(e);
+        }
+    }
 }

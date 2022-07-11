@@ -12,17 +12,23 @@ import com.mapto.api.common.model.StatusCode;
 import com.mapto.api.config.security.JwtAuthenticationResponse;
 import com.mapto.api.config.security.JwtValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final JavaMailSender javaMailSender;
 
     @Transactional
     public JwtAuthenticationResponse signIn(AuthDTO.Create signInInfo) throws CustomException {
@@ -119,5 +125,48 @@ public class AuthService {
         } else {
             throw new CustomException(StatusCode.CODE_652);
         }
+    }
+
+    @Transactional
+    public AuthDTO.Email authEmail(AuthDTO.Email authEmailDTO) throws MessagingException {
+        String authCode = createAuthCode();
+        MimeMessage message = javaMailSender.createMimeMessage();
+        message.addRecipients(Message.RecipientType.TO, authEmailDTO.getEmail());
+        message.setSubject("맵투게더 회원가입 이메일 인증입니다.");
+        String msg = "";
+        msg+= "<div>";
+        msg+= "<h2>안녕하세요. 맵투게더입니다.</h2>";
+        msg+= "<p>회원가입 인증번호는 다음과 같습니다.<p>";
+        msg+= "<p>" + authCode + "<p>";
+        msg+= "<p>감사합니다.<p>";
+        msg+= "</div>";
+        message.setContent(msg, "text/html; charset=utf-8");
+        javaMailSender.send(message);
+        authEmailDTO.setCode(authCode);
+        authEmailDTO.setCode(authCode);
+        return authEmailDTO;
+    }
+
+    public static String createAuthCode() {
+        StringBuilder code = new StringBuilder();
+        Random rnd = new Random();
+        for (int i = 0; i < 8; i++) { // 인증코드 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤
+            switch (index) {
+                case 0:
+                    code.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    //  a~z  (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+                case 1:
+                    code.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    //  A~Z
+                    break;
+                case 2:
+                    code.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+            }
+        }
+        return code.toString();
     }
 }
